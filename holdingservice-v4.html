@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kreativt rammeverk — Holdingservice</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black:   #090A08;
+  --white:   #ffffff;
+  --beige:   #F7F8F1;
+  --line:    rgba(9,10,8,0.1);
+  --line-med:rgba(9,10,8,0.16);
+  --text:    #090A08;
+  --text-sub:#090A08;
+  --lbl:     rgba(9,10,8,0.45);
+
+  --green:   #41BD0E;
+  --yellow:  #F6F94E;
+
+  --fn-bg:   #E8F0E0;   --fn-txt: #090A08;
+  --em-bg:   #090A08;   --em-txt: #ffffff;
+  --hu-bg:   #CAFFA0;   --hu-txt: #090A08;
+
+  --explore-bg: #41BD0E; --explore-txt: #ffffff;
+  --expand-bg:  #090A08; --expand-txt:  #ffffff;
+  --status-bg:  #E8E8E0; --status-txt:  #090A08;
+}
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--white);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line-med);
+  display: flex; align-items: center;
+  height: 52px; padding: 0 32px; gap: 0; overflow-x: auto;
+}
+.nav-logo {
+  font-size: 12px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; margin-right: 32px;
+  white-space: nowrap; flex-shrink: 0; color: var(--black);
+}
+.nt {
+  height: 52px; padding: 0 16px; border: none; background: none;
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  color: rgba(9,10,8,0.45); cursor: pointer; white-space: nowrap;
+  border-bottom: 2px solid transparent; transition: color .15s, border-color .15s;
+}
+.nt:hover { color: var(--black); }
+.nt.on { color: var(--black); border-bottom-color: var(--green); font-weight: 600; }
+
+/* ── PAGES ── */
+.pg { display: none; }
+.pg.on { display: block; }
+.wrap { max-width: 820px; margin: 0 auto; padding: 52px 32px 120px; }
+
+/* ── TYPE ── */
+.d1  { font-size: 40px; font-weight: 700; letter-spacing: -.03em; line-height: 1.06; margin-bottom: 12px; color: var(--black); }
+.d2  { font-size: 23px; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; margin: 52px 0 18px; color: var(--black); }
+.d2:first-child { margin-top: 0; }
+.d3  { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--lbl); margin: 32px 0 12px; }
+.lbl { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--lbl); margin-bottom: 5px; display: block; }
+.val { font-size: 14px; color: var(--text); line-height: 1.6; }
+.sub { font-size: 15px; color: rgba(9,10,8,0.6); line-height: 1.65; margin-bottom: 52px; max-width: 520px; }
+.hl  { background: var(--yellow); padding: 1px 4px; border-radius: 2px; }
+
+hr { border: none; border-top: 1px solid var(--line-med); margin: 52px 0; }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-flex; align-items: center;
+  font-size: 10px; font-weight: 700; letter-spacing: .07em;
+  text-transform: uppercase; padding: 3px 9px; border-radius: 2px;
+  white-space: nowrap; line-height: 1.4;
+}
+.b-explore { background: var(--explore-bg); color: var(--explore-txt); }
+.b-expand  { background: var(--expand-bg);  color: var(--expand-txt);  }
+.b-status  { background: var(--status-bg);  color: var(--status-txt); border: 1px solid var(--line-med); }
+.b-brand   { background: var(--black);      color: var(--white); }
+.b-fn      { background: var(--fn-bg);      color: var(--fn-txt); border: 1px solid var(--line); }
+.b-em      { background: var(--em-bg);      color: var(--em-txt); }
+.b-hu      { background: var(--hu-bg);      color: var(--hu-txt); }
+
+/* ── INFO GRID ── */
+.igrid { display: grid; gap: 1px; background: var(--line-med); border: 1px solid var(--line-med); margin-top: 16px; }
+.igrid.c2  { grid-template-columns: 1fr 1fr; }
+.igrid.c3  { grid-template-columns: 1fr 1fr 1fr; }
+.igrid.c2l { grid-template-columns: 130px 1fr; }
+.ic  { background: var(--white); padding: 18px 20px; }
+.ica { background: var(--beige); padding: 18px 20px; }
+.ic  .lbl ~ .lbl { margin-top: 14px; }
+.ica .lbl ~ .lbl { margin-top: 14px; }
+
+.stat     { font-size: 34px; font-weight: 700; letter-spacing: -.04em; line-height: 1; color: var(--black); margin-top: 4px; }
+.stat-sub { font-size: 12px; color: var(--lbl); margin: 4px 0 14px; }
+
+/* ── LEVEL LIST ── */
+.level-list { margin-top: 16px; }
+.level-item {
+  display: flex; align-items: center; padding: 15px 0;
+  gap: 18px; border-bottom: 1px solid var(--line);
+}
+.level-item:first-child { border-top: 1px solid var(--line); }
+.level-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.level-name { font-size: 14px; font-weight: 600; min-width: 180px; color: var(--black); }
+.level-desc { font-size: 13px; color: rgba(9,10,8,0.55); flex: 1; }
+
+/* ── BRAND HEADER ── */
+.brand-hd {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 16px; margin-bottom: 36px; padding-bottom: 20px;
+  border-bottom: 2px solid var(--black);
+}
+.brand-name { font-size: 28px; font-weight: 700; letter-spacing: -.025em; color: var(--black); }
+.brand-meta { font-size: 13px; color: var(--lbl); margin-top: 5px; }
+
+/* ── Q LIST ── */
+.q-list { display: flex; flex-direction: column; gap: 8px; margin-top: 2px; }
+.q-item { display: flex; gap: 8px; align-items: baseline; }
+.q-n    { font-size: 11px; font-weight: 700; color: var(--lbl); flex-shrink: 0; width: 18px; }
+.q-dot  { width: 5px; height: 5px; border-radius: 50%; background: var(--green); flex-shrink: 0; margin-top: 7px; align-self: flex-start; }
+.q-txt  { font-size: 13px; color: var(--text); line-height: 1.55; font-style: italic; }
+
+/* ── NOTES ── */
+.note { padding: 13px 20px; font-size: 13px; line-height: 1.65; margin-top: 1px; }
+.note strong { font-weight: 700; }
+.note.pos  { border-left: 3px solid var(--green); background: #edf9e6; color: var(--black); }
+.note.warn { border-left: 3px solid #d06000;      background: #fff4ec; color: var(--black); }
+
+/* ── MG HEADER ── */
+.mg-hd {
+  background: var(--beige); color: var(--black);
+  padding: 18px 22px; margin-top: 52px;
+  border: 1px solid var(--line-med); border-bottom: none;
+  border-top: 3px solid var(--black);
+}
+.mg-hd-label { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--lbl); margin-bottom: 5px; }
+.mg-hd-name  { font-size: 19px; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; color: var(--black); }
+.mg-hd-meta  { font-size: 12px; color: var(--lbl); margin-top: 4px; }
+
+.mg-body { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line-med); border: 1px solid var(--line-med); }
+.mg-cell { background: var(--beige); padding: 18px 22px; }
+.mg-cell .lbl ~ .lbl { margin-top: 14px; }
+
+/* ── PERSONA CARD ── */
+.pe { border: 1px solid var(--line-med); margin-top: 16px; }
+
+.pe-head {
+  padding: 20px 22px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--beige);
+}
+.pe-label  { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--lbl); margin-bottom: 6px; }
+.pe-title  { font-size: 20px; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; color: var(--black); margin-bottom: 5px; }
+.pe-sub    { font-size: 13px; color: rgba(9,10,8,0.55); margin-bottom: 12px; }
+.pe-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.pe-body { background: var(--white); }
+
+.pe-field-row { display: grid; grid-template-columns: 1fr 1fr; background: var(--line); gap: 1px; }
+
+.pe-field {
+  background: var(--white);
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--line);
+}
+.pe-field:last-child { border-bottom: none; }
+
+.pe-field.stemme { background: var(--yellow); border-bottom: none; }
+.pe-field.stemme .lbl { color: rgba(9,10,8,0.5); }
+
+.pf-val    { font-size: 14px; color: var(--black); line-height: 1.6; }
+.pf-val.it { font-style: italic; font-size: 14px; color: var(--black); }
+.pf-val .hl { background: rgba(9,10,8,0.12); padding: 1px 4px; border-radius: 2px; }
+.pe-field.stemme .pf-val .hl { background: rgba(9,10,8,0.15); }
+
+/* ── KONSEPT GRID ── */
+.ko-wrap {
+  border-top: 2px solid var(--black);
+  background: var(--beige);
+  padding: 18px 22px;
+}
+.ko-label {
+  font-size: 11px; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--lbl); margin-bottom: 12px;
+}
+.ko-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--line-med); border: 1px solid var(--line-med);
+}
+.ko-cell { background: var(--white); }
+.ko-head {
+  padding: 11px 14px 10px; border-bottom: 1px solid var(--line);
+  display: flex; justify-content: space-between;
+  align-items: flex-start; gap: 10px;
+}
+.ko-name { font-size: 13px; font-weight: 600; line-height: 1.35; flex: 1; color: var(--black); }
+.ko-body { padding: 11px 14px; }
+.ko-lbl  {
+  font-size: 10px; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--lbl);
+  margin-bottom: 3px; margin-top: 9px;
+}
+.ko-lbl:first-child { margin-top: 0; }
+.ko-val { font-size: 12px; color: rgba(9,10,8,0.7); line-height: 1.55; }
+
+/* ── SEASON ── */
+.season-wrap { border: 1.5px solid var(--black); margin-top: 52px; }
+.season-head {
+  background: var(--black); color: var(--white);
+  padding: 15px 22px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.season-title { font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
+.season-meta  { font-size: 11px; opacity: .4; white-space: nowrap; }
+.season-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line-med); }
+.season-cell  { background: var(--white); padding: 16px 22px; }
+.season-hooks {
+  background: var(--beige);
+  border-top: 1px solid var(--line-med);
+  padding: 15px 22px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.season-hook {
+  font-size: 13px; font-style: italic; color: var(--black);
+  line-height: 1.55; padding-left: 20px; position: relative;
+}
+.season-hook::before {
+  content: '→'; position: absolute; left: 0;
+  color: var(--black); font-style: normal; font-weight: 600;
+}
+
+/* ── FORMUESVERDI ── */
+.fv-wrap { border: 1.5px solid var(--black); margin-top: 52px; }
+.fv-head {
+  background: var(--black); color: var(--white);
+  padding: 15px 22px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.fv-title { font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
+.fv-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line-med); }
+.fv-cell  { background: var(--white); padding: 16px 22px; }
+.fv-konsept { padding: 18px 22px; background: var(--beige); border-top: 1px solid var(--line-med); }
+.fv-ko-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--line-med); border: 1px solid var(--line-med); margin-top: 12px;
+}
+
+/* ── GUIDE-SPESIFIKKE KOMPONENTER ── */
+
+/* Nummerert steg-liste */
+.g-steps { margin-top: 16px; }
+.g-step {
+  display: flex; gap: 0;
+  border: 1px solid var(--line-med); border-bottom: none;
+}
+.g-step:first-child { border-top: 1px solid var(--line-med); }
+.g-step:last-child  { border-bottom: 1px solid var(--line-med); }
+.g-step-n {
+  font-size: 28px; font-weight: 700; letter-spacing: -.04em;
+  color: var(--line-med); line-height: 1;
+  padding: 18px 20px; flex-shrink: 0; min-width: 60px;
+  display: flex; align-items: flex-start; padding-top: 20px;
+  background: var(--beige);
+}
+.g-step-body {
+  padding: 18px 22px; flex: 1;
+  border-left: 1px solid var(--line-med);
+  background: var(--white);
+}
+.g-step-name { font-size: 14px; font-weight: 600; color: var(--black); margin-bottom: 5px; }
+.g-step-desc { font-size: 13px; color: rgba(9,10,8,0.6); line-height: 1.6; }
+.g-step-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+
+/* Felttabell */
+.g-table { border: 1px solid var(--line-med); margin-top: 16px; }
+.g-table-head {
+  background: var(--beige); padding: 13px 22px;
+  border-bottom: 1px solid var(--line-med);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.g-table-title { font-size: 13px; font-weight: 600; color: var(--black); }
+.g-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line-med); }
+.g-cell { background: var(--white); padding: 16px 22px; }
+.g-cell.full { grid-column: 1/-1; }
+.g-cell .lbl { margin-bottom: 4px; }
+.g-cell .val { font-size: 13px; }
+
+/* Kodeblokk / eksempel */
+.g-code {
+  background: var(--black); border-radius: 2px;
+  padding: 16px 22px; margin: 12px 0;
+}
+.g-code-lbl {
+  font-size: 10px; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 10px;
+}
+.g-code-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; color: rgba(255,255,255,0.75);
+  line-height: 1.8; white-space: pre-wrap;
+}
+
+/* Info / advarsel / ok */
+.g-info {
+  background: var(--beige); border: 1px solid var(--line-med);
+  border-left: 3px solid rgba(9,10,8,0.3);
+  padding: 13px 20px; font-size: 13px;
+  color: rgba(9,10,8,0.7); line-height: 1.65; margin: 16px 0;
+}
+.g-info strong { color: var(--black); font-weight: 600; }
+.g-warn {
+  background: #fff4ec; border: 1px solid #f5d5b8;
+  border-left: 3px solid #d06000;
+  padding: 13px 20px; font-size: 13px;
+  color: var(--black); line-height: 1.65; margin: 16px 0;
+}
+.g-warn strong { font-weight: 600; }
+.g-ok {
+  background: #edf9e6; border: 1px solid #bde8a8;
+  border-left: 3px solid var(--green);
+  padding: 13px 20px; font-size: 13px;
+  color: var(--black); line-height: 1.65; margin: 16px 0;
+}
+.g-ok strong { font-weight: 600; }
+
+/* Todelt split */
+.g-split {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--line-med);
+  border: 1px solid var(--line-med); margin-top: 16px;
+}
+.g-split-w { background: var(--white); padding: 18px 22px; }
+.g-split-b { background: var(--beige); padding: 18px 22px; }
+
+/* Regel-liste */
+.g-rules {
+  display: flex; flex-direction: column;
+  gap: 1px; background: var(--line-med);
+  border: 1px solid var(--line-med); margin-top: 16px;
+}
+.g-rule { background: var(--white); display: flex; gap: 16px; padding: 14px 22px; align-items: flex-start; }
+.g-rule-arrow { font-size: 13px; font-weight: 700; color: var(--green); flex-shrink: 0; margin-top: 1px; }
+.g-rule-text { font-size: 13px; color: var(--black); line-height: 1.6; }
+.g-rule-text strong { font-weight: 600; }
+
+/* Hook-grid */
+.g-hook-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--line-med);
+  border: 1px solid var(--line-med); margin-top: 16px;
+}
+.g-hook-cell { background: var(--white); padding: 16px 22px; }
+.g-hook-cell .lbl { margin-bottom: 5px; }
+
+/* Gjør / unngå liste */
+.g-dot-list { display: flex; flex-direction: column; gap: 7px; margin-top: 10px; }
+.g-dot-item { display: flex; gap: 10px; align-items: baseline; }
+.g-dot-green { width: 5px; height: 5px; border-radius: 50%; background: var(--green); flex-shrink: 0; margin-top: 7px; align-self: flex-start; }
+.g-dot-black { width: 5px; height: 5px; border-radius: 50%; background: rgba(9,10,8,0.25); flex-shrink: 0; margin-top: 7px; align-self: flex-start; }
+.g-dot-text { font-size: 13px; color: var(--black); line-height: 1.55; }
+
+@media (max-width: 620px) {
+  .wrap { padding: 28px 16px 80px; }
+  .d1 { font-size: 28px; }
+  .d2 { font-size: 20px; }
+  .igrid.c2, .igrid.c3, .mg-body,
+  .ko-grid, .fv-ko-grid, .season-grid, .fv-grid,
+  .pe-field-row, .g-rows, .g-split, .g-hook-grid { grid-template-columns: 1fr; }
+  .level-name { min-width: auto; }
+  .g-cell.full { grid-column: 1; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">Kreativt rammeverk</div>
+  <button class="nt on" onclick="go('modell',this)">Modellen</button>
+  <button class="nt" onclick="go('innsikt',this)">Innsikt</button>
+  <button class="nt" onclick="go('hs',this)">Holdingservice</button>
+  <button class="nt" onclick="go('guide',this)">Guide</button>
+</nav>
+
+
+<!-- ════ MODELLEN ════ -->
+<div id="p-modell" class="pg on"><div class="wrap">
+  <div class="d1">Kreativt rammeverk.</div>
+  <div class="sub">Fra produkt til ferdig annonse. Fem nivåer — tre strategiske, to produksjon.</div>
+
+  <div class="d2">Fem nivåer.</div>
+  <div class="level-list">
+    <div class="level-item">
+      <div class="level-dot" style="background:var(--line-med)"></div>
+      <div class="level-name">Produkt / kategori</div>
+      <div class="level-desc">Utgangspunktet. Katalog alltid på.</div>
+      <span class="badge b-status">Brand-nivå</span>
+    </div>
+    <div class="level-item">
+      <div class="level-dot" style="background:var(--black)"></div>
+      <div class="level-name">Målgruppe</div>
+      <div class="level-desc">Hvem vi er for. Stabilt. Tag og filter for kreatørvalg.</div>
+      <span class="badge b-status">Stabil</span>
+    </div>
+    <div class="level-item">
+      <div class="level-dot" style="background:var(--green)"></div>
+      <div class="level-name">Persona</div>
+      <div class="level-desc">Tre spørsmål som til sammen dekker hele funnel.</div>
+      <span class="badge b-explore">Explore: ny persona</span>
+    </div>
+    <div class="level-item">
+      <div class="level-dot" style="background:var(--green)"></div>
+      <div class="level-name">Konsept</div>
+      <div class="level-desc">Det kreative svaret på personaen. Tagges med TOV.</div>
+      <span class="badge b-explore">Explore: nytt konsept</span>
+    </div>
+    <div class="level-item">
+      <div class="level-dot" style="background:var(--black)"></div>
+      <div class="level-name">Diversifisering</div>
+      <div class="level-desc">3–4 annonser per konsept. Hooks · lo-fi/hi-fi · formater.</div>
+      <span class="badge b-expand">Expand</span>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="d2">Persona — tre spørsmål.</div>
+  <div class="igrid c2l">
+    <div class="ica"><span class="lbl">Motivasjon</span></div>
+    <div class="ic"><span class="val">Hva driver dem mot kjøp?</span></div>
+    <div class="ica" style="border-top:1px solid var(--line)"><span class="lbl">Hindring</span></div>
+    <div class="ic"  style="border-top:1px solid var(--line)"><span class="val">Hva hindrer de som vurderer oss fra å kjøpe?</span></div>
+    <div class="ica" style="border-top:1px solid var(--line)"><span class="lbl">Kunnskap</span></div>
+    <div class="ic"  style="border-top:1px solid var(--line)"><span class="val">Hva vet de ikke, som ville gjort valget enkelt?</span></div>
+  </div>
+
+  <div class="d3" style="margin-top:44px">Tone of voice</div>
+  <div class="igrid c3">
+    <div class="ic">
+      <span class="badge b-fn" style="margin-bottom:10px;display:inline-block">Funksjon</span>
+      <div class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">Konkret, målbart, rasjonelt</div>
+    </div>
+    <div class="ic">
+      <span class="badge b-em" style="margin-bottom:10px;display:inline-block">Emosjon</span>
+      <div class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">Aspirational, relaterbar, identitetsdrevet</div>
+    </div>
+    <div class="ic">
+      <span class="badge b-hu" style="margin-bottom:10px;display:inline-block">Humor</span>
+      <div class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">Ironi og gjenkjenning, disarmerer hindringen</div>
+    </div>
+  </div>
+
+  <div class="d3" style="margin-top:44px">Explore og Expand</div>
+  <div class="igrid c2">
+    <div class="ic">
+      <span class="badge b-explore" style="margin-bottom:10px;display:inline-block">Explore — 5 per måned</span>
+      <div class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">Ny persona ikke i kontoen<br>Nytt konsept innenfor eksisterende persona</div>
+    </div>
+    <div class="ic">
+      <span class="badge b-expand" style="margin-bottom:10px;display:inline-block">Expand — 5 per uke</span>
+      <div class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">Ny hook · ny visual · nytt format<br>Lo-fi/hi-fi iterasjon på vinnere</div>
+    </div>
+  </div>
+</div></div>
+
+
+<!-- ════ INNSIKT ════ -->
+<div id="p-innsikt" class="pg"><div class="wrap">
+  <div class="brand-hd">
+    <div>
+      <div class="brand-name">Holdingservice — innsikt.</div>
+      <div class="brand-meta">Desk research · mars 2026 · Holdingservice, Sanna, Fiken, Nordnet, kundebrief</div>
+    </div>
+    <span class="badge b-brand">Solution-first</span>
+  </div>
+
+  <div class="d2" style="margin-top:0">Posisjon og produkt.</div>
+  <div class="igrid c3">
+    <div class="ica">
+      <span class="lbl">Posisjon</span>
+      <span class="val">Eneste aktør i Norge med eksklusiv spesialisering på holdingselskaper. Ende-til-ende regnskap og skatt.</span>
+    </div>
+    <div class="ic">
+      <span class="lbl">Vinner på</span>
+      <span class="val">Kompetanse, fastpris, full ansvarsoverføring, lav churn, 600+ kunder</span>
+      <span class="lbl">Taper på</span>
+      <span class="val">Svakt visuelt brand, WOM-drevet, ikke skalert, lite kjent utenfor nettverket</span>
+    </div>
+    <div class="ic">
+      <span class="lbl">Høysesong</span>
+      <div class="stat">31/5</div>
+      <div class="stat-sub">Frist skattemelding selskap. 30/6 frist årsregnskap</div>
+      <span class="lbl">CAC-vindu</span>
+      <span class="val">CAC februar: 1 690 kr. Kan betale inntil 3 380 kr per ny kunde.</span>
+    </div>
+  </div>
+
+  <div class="d2">Konkurranselandskap.</div>
+  <div class="igrid c3">
+    <div class="ic">
+      <span class="val" style="font-weight:700;display:block;margin-bottom:4px">Fiken</span>
+      <span class="lbl">Selvbetjening · lavpris</span>
+      <span class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">Lav terskel · ser enkelt ut · regnskap leveres og godkjennes med store feil som ikke oppdages</span>
+    </div>
+    <div class="ic">
+      <span class="val" style="font-weight:700;display:block;margin-bottom:4px">Generalistregnskapsfører</span>
+      <span class="lbl">Timespris · lav prioritet</span>
+      <span class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">Ønsker kunder som faktureres hele året — holdingselskaper er dårlige kunder som nedprioriteres</span>
+    </div>
+    <div class="ica">
+      <span class="val" style="font-weight:700;display:block;margin-bottom:4px">Holdingservice</span>
+      <span class="lbl">Fastpris · spesialist</span>
+      <span class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">Tar ansvar, retter følgefeil, alltid tilgjengelig, ingen overraskelser på fakturaen</span>
+    </div>
+  </div>
+
+  <div class="d2">Hva <span class="hl">driver</span> kjøp.</div>
+  <div class="igrid c2">
+    <div class="ic">
+      <span class="lbl">Drivere</span>
+      <div class="q-list">
+        <div class="q-item"><span class="q-n">1.</span><span class="q-txt">Slippe å bruke tid på holdingselskapet</span></div>
+        <div class="q-item"><span class="q-n">2.</span><span class="q-txt">Være sikker på at det er riktig — og at noen andre tar ansvaret</span></div>
+        <div class="q-item"><span class="q-n">3.</span><span class="q-txt">Ikke betale mer skatt enn nødvendig</span></div>
+        <div class="q-item"><span class="q-n">4.</span><span class="q-txt">Slippe å Google spørsmål man ikke burde måtte svare på selv</span></div>
+        <div class="q-item"><span class="q-n">5.</span><span class="q-txt">Fastpris — vite hva det koster</span></div>
+      </div>
+    </div>
+    <div class="ic">
+      <span class="lbl">I kundens eget språk</span>
+      <div class="q-list">
+        <div class="q-item"><span class="q-dot"></span><span class="q-txt">«Minimerer det administrative arbeidet for meg»</span></div>
+        <div class="q-item"><span class="q-dot"></span><span class="q-txt">«Ingen flere timer på Google for å finne ut hvordan jeg fører utbytte»</span></div>
+        <div class="q-item"><span class="q-dot"></span><span class="q-txt">«Trygg på at alt blir levert riktig og til rett tid»</span></div>
+        <div class="q-item"><span class="q-dot"></span><span class="q-txt">«Mindre tid på regnskap = mer tid til å bygge»</span></div>
+        <div class="q-item"><span class="q-dot"></span><span class="q-txt">«Noe jeg ville bruke minst mulig tid og energi på»</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="note pos"><strong>Nøkkelinnsikt.</strong> Kjøpsdriveren er ikke kompetanse alene — det er overføring av ansvar. Kundene vil ikke forstå holdingselskapet. De vil at noen andre skal eie det.</div>
+
+  <div class="d2">Hva <span class="hl">stopper</span> kjøp.</div>
+  <div class="igrid c2">
+    <div class="ic">
+      <span class="lbl">Hindringer</span>
+      <div class="q-list">
+        <div class="q-item"><span class="q-n">1.</span><span class="q-txt">Tror Fiken er billig nok — og enkelt nok</span></div>
+        <div class="q-item"><span class="q-n">2.</span><span class="q-txt">Vet ikke at feilene er usynlige til det er for sent</span></div>
+        <div class="q-item"><span class="q-n">3.</span><span class="q-txt">Tror eksisterende generalistregnskapsfører er kompetent nok</span></div>
+        <div class="q-item"><span class="q-n">4.</span><span class="q-txt">Kjenner ikke til Holdingservice — merkevaren lever i nettverket</span></div>
+        <div class="q-item"><span class="q-n">5.</span><span class="q-txt">Frykter bytte er komplisert og tidkrevende</span></div>
+      </div>
+    </div>
+    <div class="ic">
+      <span class="lbl">I kundens eget språk</span>
+      <div class="q-list">
+        <div class="q-item"><span class="q-dot"></span><span class="q-txt">«Den evige følelsen av å ikke vite om jeg har gjort alt riktig»</span></div>
+        <div class="q-item"><span class="q-dot"></span><span class="q-txt">«Frustrasjonen og stresset rundt regnskapet»</span></div>
+        <div class="q-item"><span class="q-dot"></span><span class="q-txt">«Feil kan leveres og bli godkjent — og dukker opp ved bokettersyn»</span></div>
+        <div class="q-item"><span class="q-dot"></span><span class="q-txt">«Jeg forstår ikke hvordan skjermingsfradraget fungerer i et AS»</span></div>
+        <div class="q-item"><span class="q-dot"></span><span class="q-txt">«Trodde jeg hadde forstått dette, men ble nå usikker»</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="note warn"><strong>Nøkkelinnsikt.</strong> Den usynlige feilen er det farligste konkurrentvåpenet. Fiken-regnskap kan leveres, godkjennes og se riktig ut — mens feilene vokser. Dette er Holdingservices sterkeste argument, og det er nesten aldri kommunisert.</div>
+
+</div></div>
+
+
+<!-- ════ HOLDINGSERVICE ════ -->
+<div id="p-hs" class="pg"><div class="wrap">
+  <div class="brand-hd">
+    <div>
+      <div class="brand-name">Holdingservice.</div>
+      <div class="brand-meta">Solution-first · regnskap og skatt · eksklusivt for holdingselskaper</div>
+    </div>
+    <span class="badge b-brand">Solution-first</span>
+  </div>
+
+  <!-- MG A -->
+  <div class="mg-hd">
+    <div class="mg-hd-label">Målgruppe A</div>
+    <div class="mg-hd-name">Aktive byggere — gründere og investorer</div>
+    <div class="mg-hd-meta">25–50 år · Lav til middels kategorikunnskap</div>
+  </div>
+  <div class="mg-body">
+    <div class="mg-cell">
+      <span class="lbl">Verdier og identitet</span>
+      <span class="val">Tid er den knappeste ressursen. Bruker energi på det som gir avkastning — ikke administrasjon. Smart-deal-mentalitet.</span>
+      <span class="lbl">Feed-preferanser</span>
+      <span class="val">Startup-Twitter/X, investor-LinkedIn, Shifter, founders-podcaster, finansinnhold</span>
+    </div>
+    <div class="mg-cell">
+      <span class="lbl">Kategorikunnskap</span>
+      <span class="val">Lav til middels. Bruker gjerne Fiken eller generalistregnskapsfører i dag. Kjenner ikke til at feilene er skjulte.</span>
+      <span class="lbl">Kreatørtype</span>
+      <span class="val">Founder-creator, investor-creator, «dette lærte jeg»-format, no-BS-tone</span>
+    </div>
+  </div>
+
+  <!-- P1 -->
+  <div class="d3" style="margin-top:36px">Persona 1 av 3</div>
+  <div class="pe">
+    <div class="pe-head">
+      <div class="pe-label">Tech-gründer</div>
+      <div class="pe-title">Vil bygge — ikke bokføre.</div>
+      <div class="pe-sub">Bruker Fiken i dag. Tror det er greit nok. Har ikke tid til å finne ut om det faktisk er det.</div>
+      <div class="pe-badges">
+        <span class="badge b-status">Problem-unaware</span>
+        <span class="badge b-explore">Explore: ny persona</span>
+      </div>
+    </div>
+    <div class="pe-body">
+      <div class="pe-field-row">
+        <div class="pe-field">
+          <span class="lbl">Motivasjon</span>
+          <div class="pf-val">Vil at holdingselskapet steller seg selv. Har startet selskapet for å investere og bygge — ikke for å håndtere rapporteringsfrister.</div>
+        </div>
+        <div class="pe-field">
+          <span class="lbl">Hindring</span>
+          <div class="pf-val">Tror Fiken er tilstrekkelig. Ser ikke feilene fordi de er usynlige. Bytter ikke noe som tilsynelatende fungerer.</div>
+        </div>
+      </div>
+      <div class="pe-field">
+        <span class="lbl">Benefit</span>
+        <div class="pf-val">Slipper å tenke på holdingselskapet. Vet at det er riktig. Har noen å ringe hvis det dukker opp spørsmål om utbytte, kapitalforhøyelse eller lån.</div>
+      </div>
+      <div class="pe-field">
+        <span class="lbl">Kunnskap de mangler</span>
+        <div class="pf-val">Fiken-regnskap kan leveres og godkjennes med store feil — som ikke vises før bokettersyn. <span class="hl">Å levere er ikke det samme som å levere riktig.</span> Feil koster mer enn Holdingservice gjør.</div>
+      </div>
+      <div class="pe-field stemme">
+        <span class="lbl">Intern stemme</span>
+        <div class="pf-val it">«Holdingselskapet er ganske enkelt, det er vel bare å levere tallene. Det ordner jeg i Fiken.»</div>
+      </div>
+    </div>
+    <div class="ko-wrap">
+      <div class="ko-label">Konsept — eksempler</div>
+      <div class="ko-grid">
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Fiken leverer — men leverer riktig?</span><span class="badge b-fn">Funksjon</span></div>
+          <div class="ko-body"><div class="ko-lbl">Svarer på</div><div class="ko-val">Kunnskap de mangler — usynlige feil i Fiken-regnskap</div><div class="ko-lbl">Ide</div><div class="ko-val">Vis differansen mellom å levere og å levere riktig. De vanligste feilene — og hva de koster.</div></div>
+        </div>
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Bokettersynet de ikke visste om</span><span class="badge b-em">Emosjon</span></div>
+          <div class="ko-body"><div class="ko-lbl">Svarer på</div><div class="ko-val">Hindringen — feilene er usynlige til det er for sent</div><div class="ko-lbl">Ide</div><div class="ko-val">Founder forteller hva som skjedde da Skatteetaten kom på besøk. Fiken hadde ikke advart.</div></div>
+        </div>
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Tid er penger. Regn det ut.</span><span class="badge b-fn">Funksjon</span></div>
+          <div class="ko-body"><div class="ko-lbl">Svarer på</div><div class="ko-val">Motivasjonen — tid er den knappeste ressursen</div><div class="ko-lbl">Ide</div><div class="ko-val">Konkret kalkyle: hva bruker du i dag? Hva er din timepris? Regn det mot fastprisen.</div></div>
+        </div>
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Vi tar ansvar. Du trenger ikke.</span><span class="badge b-em">Emosjon</span></div>
+          <div class="ko-body"><div class="ko-lbl">Svarer på</div><div class="ko-val">Motivasjonen + benefit — full ansvarsoverføring</div><div class="ko-lbl">Ide</div><div class="ko-val">Holdingselskapets plikter blir Holdingservices plikter. Kontrast mot Fiken som ikke tar ansvar.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- P2 -->
+  <div class="d3" style="margin-top:36px">Persona 2 av 3</div>
+  <div class="pe">
+    <div class="pe-head">
+      <div class="pe-label">Investor</div>
+      <div class="pe-title">Vil spare skatt — ikke bare levere regnskap.</div>
+      <div class="pe-sub">Bred investering (startups, fond, børs). Har gjerne regnskapsfører i dag, men opplever manglende kompetanse på holdingspesifikke problemstillinger.</div>
+      <div class="pe-badges">
+        <span class="badge b-status">Solution-aware</span>
+      </div>
+    </div>
+    <div class="pe-body">
+      <div class="pe-field-row">
+        <div class="pe-field">
+          <span class="lbl">Motivasjon</span>
+          <div class="pf-val">Vil optimere — ikke bare levere. Valgene som gjøres påvirker skatteregningen og avkastningen over tid. Vil ha en kompetent sparringspartner.</div>
+        </div>
+        <div class="pe-field">
+          <span class="lbl">Hindring</span>
+          <div class="pf-val">Eksisterende regnskapsfører virker ok nok. Bytte er et prosjekt. Vet ikke om Holdingservice faktisk er bedre — eller bare billigere.</div>
+        </div>
+      </div>
+      <div class="pe-field">
+        <span class="lbl">Benefit</span>
+        <div class="pf-val">En spesialist som ser utbyttestrategi, kapitalinnskudd og skattemessige grep — og proaktivt foreslår smartere løsninger.</div>
+      </div>
+      <div class="pe-field">
+        <span class="lbl">Kunnskap de mangler</span>
+        <div class="pf-val"><span class="hl">Generalistregnskapsfører nedprioriterer holdingkunder.</span> Jobben gjøres på våren, men byrået vil ha helårskunder. Holdingservice er eneste aktør som bare gjør dette.</div>
+      </div>
+      <div class="pe-field stemme">
+        <span class="lbl">Intern stemme</span>
+        <div class="pf-val it">«Regnskapsføreren min har levert, men jeg er aldri sikker på om vi optimerer skattesituasjonen. De skjønner ikke holdingselskaper på samme måte.»</div>
+      </div>
+    </div>
+    <div class="ko-wrap">
+      <div class="ko-label">Konsept — eksempler</div>
+      <div class="ko-grid">
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">De vanligste skattefeilene i holdingselskaper</span><span class="badge b-fn">Funksjon</span></div>
+          <div class="ko-body"><div class="ko-lbl">Svarer på</div><div class="ko-val">Kunnskap de mangler — hva generalistregnskap ikke fanger opp</div><div class="ko-lbl">Ide</div><div class="ko-val">Innholdsdrevet: formuesverdi, utbyttebeskatning, fritaksmetoden. Vis kompetansen — ikke påstå den.</div></div>
+        </div>
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Spesialist vs. generalist</span><span class="badge b-hu">Humor</span></div>
+          <div class="ko-body"><div class="ko-lbl">Svarer på</div><div class="ko-val">Hindringen — eksisterende regnskapsfører virker ok</div><div class="ko-lbl">Ide</div><div class="ko-val">Analogi: du bruker ikke en generalistlege til å operere kneet. Hvorfor bruke en generalist på holdingselskapet?</div></div>
+        </div>
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Vi foreslår smartere grep</span><span class="badge b-em">Emosjon</span></div>
+          <div class="ko-body"><div class="ko-lbl">Svarer på</div><div class="ko-val">Motivasjonen — proaktiv rådgivning, ikke bare leveranse</div><div class="ko-lbl">Ide</div><div class="ko-val">Vis at Holdingservice ikke bare leverer — de følger opp og foreslår. Konkrete eksempler på grep som ga kunder mer.</div></div>
+        </div>
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Bytte er én eksport fra Fiken</span><span class="badge b-fn">Funksjon</span></div>
+          <div class="ko-body"><div class="ko-lbl">Svarer på</div><div class="ko-val">Hindringen — bytte er et prosjekt</div><div class="ko-lbl">Ide</div><div class="ko-val">Én eksport, ingen oppstartsgebyr. Holdingservice gjør kvalitetssjekken. En time, ikke et prosjekt.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MG B -->
+  <div class="mg-hd">
+    <div class="mg-hd-label">Målgruppe B</div>
+    <div class="mg-hd-name">Passive eiere — ansatte med holdingselskap de ikke valgte</div>
+    <div class="mg-hd-meta">28–45 år · Lav kategorikunnskap</div>
+  </div>
+  <div class="mg-body">
+    <div class="mg-cell">
+      <span class="lbl">Verdier og identitet</span>
+      <span class="val">Har holdingselskap fordi de måtte — som følge av ansatteaksjer. Ser på det som et nødvendig onde. Vil bli holdt i hånden.</span>
+      <span class="lbl">Feed-preferanser</span>
+      <span class="val">LinkedIn, generell nyhetsstrøm, jobbrelatert innhold. Lav søkeintensjon — de leter ikke aktivt.</span>
+    </div>
+    <div class="mg-cell">
+      <span class="lbl">Kategorikunnskap</span>
+      <span class="val">Lav — forstår ikke hva de trenger å gjøre og er ikke interessert i å lære det.</span>
+      <span class="lbl">Kreatørtype</span>
+      <span class="val">Relaterbar og hverdagslig. «Jeg skjønner ingenting om dette»-format. Betalt annonsering over creator.</span>
+    </div>
+  </div>
+
+  <!-- P3 -->
+  <div class="d3" style="margin-top:36px">Persona 3 av 3</div>
+  <div class="pe">
+    <div class="pe-head">
+      <div class="pe-label">Ansatt med ansatteierskap</div>
+      <div class="pe-title">Vil slippe å tenke på det — i det hele tatt.</div>
+      <div class="pe-sub">Holdingselskapet er et nødvendig onde. Vil bruke null tid og null energi på det.</div>
+      <div class="pe-badges">
+        <span class="badge b-status">Problem-aware</span>
+        <span class="badge b-explore">Explore: ny persona</span>
+      </div>
+    </div>
+    <div class="pe-body">
+      <div class="pe-field-row">
+        <div class="pe-field">
+          <span class="lbl">Motivasjon</span>
+          <div class="pf-val">Vil at holdingselskapet eksisterer i bakgrunnen uten å kreve noe. Null administrasjon, null bekymring, ingen kunnskap nødvendig.</div>
+        </div>
+        <div class="pe-field">
+          <span class="lbl">Hindring</span>
+          <div class="pf-val">Vet ikke at det finnes en løsning som faktisk tar alt. Prøver kanskje Fiken og tror det er slik det er.</div>
+        </div>
+      </div>
+      <div class="pe-field">
+        <span class="lbl">Benefit</span>
+        <div class="pf-val">Frister overholdt. Ingen overraskelser. Ingen regninger med ukjent beløp. Noen tar kontakt hvis det trengs noe — ikke omvendt.</div>
+      </div>
+      <div class="pe-field">
+        <span class="lbl">Kunnskap de mangler</span>
+        <div class="pf-val">At det finnes noen som tar <span class="hl">hele ansvaret</span> — inkludert å rette opp feil fra tidligere år — til en forutsigbar fastpris. Ingen kunnskap nødvendig fra deg.</div>
+      </div>
+      <div class="pe-field stemme">
+        <span class="lbl">Intern stemme</span>
+        <div class="pf-val it">«For meg var det å ha holdingselskap et nødvendig onde, og noe jeg ville bruke minst mulig tid og energi på.»</div>
+      </div>
+    </div>
+    <div class="ko-wrap">
+      <div class="ko-label">Konsept — eksempler</div>
+      <div class="ko-grid">
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Et nødvendig onde, løst</span><span class="badge b-em">Emosjon</span></div>
+          <div class="ko-body"><div class="ko-lbl">Svarer på</div><div class="ko-val">Intern stemme — treffer identiteten direkte</div><div class="ko-lbl">Ide</div><div class="ko-val">Bruk sitatet direkte som hook. «For meg var holdingselskapet et nødvendig onde.» Gjenkjennelig, lavterskel.</div></div>
+        </div>
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Vi tar kontakt — ikke du</span><span class="badge b-fn">Funksjon</span></div>
+          <div class="ko-body"><div class="ko-lbl">Svarer på</div><div class="ko-val">Motivasjonen — null administrasjon</div><div class="ko-lbl">Ide</div><div class="ko-val">Vis serviceprosessen konkret: Holdingservice sender deg enkle forespørsler. Du slipper å henge i luften.</div></div>
+        </div>
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Ingen overraskelser på fakturaen</span><span class="badge b-fn">Funksjon</span></div>
+          <div class="ko-body"><div class="ko-lbl">Svarer på</div><div class="ko-val">Hindringen — ukjent pris og timespris-frykt</div><div class="ko-lbl">Ide</div><div class="ko-val">Fastpris. Alt inkludert. Kontrast mot generalistregnskapsførers timespris.</div></div>
+        </div>
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Skjønner ingenting? Perfekt.</span><span class="badge b-hu">Humor</span></div>
+          <div class="ko-body"><div class="ko-lbl">Svarer på</div><div class="ko-val">Kunnskap de mangler — ingen kunnskap nødvendig</div><div class="ko-lbl">Ide</div><div class="ko-val">Selvironisk. De som skjønner minst er de beste kundene — de trenger en som skjønner alt.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HØYSESONG -->
+  <div class="season-wrap">
+    <div class="season-head">
+      <div class="season-title">Høysesongsignal — mars til juni 2026</div>
+      <div class="season-meta">Gjelder på tvers av alle personaer</div>
+    </div>
+    <div class="season-grid">
+      <div class="season-cell">
+        <span class="lbl">Frister som trigger</span>
+        <span class="val" style="font-size:13px">Personlig skattemelding i mars trigger behov for tall fra holdingen. 31. mai: skattemelding selskap. 30. juni: årsregnskap</span>
+      </div>
+      <div class="season-cell">
+        <span class="lbl">Strategisk logikk</span>
+        <span class="val" style="font-size:13px">«Det er ikke for sent» er mottrekket mot passivitet. Onboarding er rask: én eksport, ingen oppstartsgebyr. Rydder opp i tidligere feil og leverer i tide.</span>
+      </div>
+      <div class="season-cell" style="border-top:1px solid var(--line)">
+        <span class="lbl">Eskalering</span>
+        <span class="val" style="font-size:13px">Urgency øker gradvis mot 31. mai, fristdato inn i kreativt. Etter 31. mai skifter anker til 30. juni årsregnskap.</span>
+      </div>
+      <div class="season-cell" style="border-top:1px solid var(--line)">
+        <span class="lbl">Tone</span>
+        <span class="val" style="font-size:13px">Ro og kontroll. Holdingservice løser det, de har gjort det hundrevis av ganger.</span>
+      </div>
+    </div>
+    <div class="season-hooks">
+      <span class="lbl" style="margin-bottom:8px">Hook-hypoteser for høysesong</span>
+      <div class="season-hook">«Fristen er 31. mai. Har du levert skattemeldingen for holdingselskapet?»</div>
+      <div class="season-hook">«Vi har hjulpet 600+ holdingselskaper levere i tide. Også de som kom til oss i april.»</div>
+      <div class="season-hook">«Fristen er om X dager. Onboarding tar én arbeidsdag.»</div>
+      <div class="season-hook">«Rydder opp i feil fra Fiken — og leverer i tide. Det er det vi gjør.»</div>
+    </div>
+  </div>
+
+  <!-- FORMUESVERDI -->
+  <div class="fv-wrap">
+    <div class="fv-head">
+      <div class="fv-title">formuesverdi.no — top-of-funnel</div>
+      <span class="badge b-status">Annen kreativ logikk</span>
+    </div>
+    <div class="fv-grid">
+      <div class="fv-cell">
+        <span class="lbl">Hva det er</span>
+        <span class="val" style="font-size:13px">Gratis verktøy der aksjeselskaper deler formuesverdi med sine aksjonærer via Altinn. Automatiserer noe mange bruker mye tid på manuelt i dag.</span>
+      </div>
+      <div class="fv-cell">
+        <span class="lbl">Strategisk rolle</span>
+        <span class="val" style="font-size:13px">Lead-magnet og topptrakt-inngang til kjernetjenesten. Gratis, nyttig og nettverksdrevet. Lav terskel for klikk, sterk nettverkseffekt i startup-miljøet.</span>
+      </div>
+      <div class="fv-cell" style="border-top:1px solid var(--line)">
+        <span class="lbl">Primær målgruppe</span>
+        <span class="val" style="font-size:13px">Aksjeselskaper som deler formuesverdi med aksjonærer — typisk gründere i driftsselskapet. Leder til Holdingservice-assosiasjonen.</span>
+      </div>
+      <div class="fv-cell" style="border-top:1px solid var(--line)">
+        <span class="lbl">Kreativ mekanikk</span>
+        <span class="val" style="font-size:13px">Ikke problem/løsning-logikk. Produktet er helten fra frame 1. Vis hva det gjør og hvor mye tid det sparer. Nettverkseffekten er budskapet.</span>
+      </div>
+    </div>
+    <div class="fv-konsept">
+      <div class="ko-label">Konsept — eksempler</div>
+      <div class="fv-ko-grid">
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Del formuesverdi på ett klikk</span><span class="badge b-fn">Funksjon</span></div>
+          <div class="ko-body"><div class="ko-lbl">Ide</div><div class="ko-val">Vis den konkrete jobben verktøyet gjør og hvor mye tid det sparer. Kontrast mot manuell prosess i Altinn.</div></div>
+        </div>
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Aksjonærene venter på disse tallene</span><span class="badge b-em">Emosjon</span></div>
+          <div class="ko-body"><div class="ko-lbl">Ide</div><div class="ko-val">Setter avsender i profesjonell posisjon overfor egne aksjonærer. Gjøre det enkelt å fremstå som ryddig og kompetent.</div></div>
+        </div>
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Gratis. Alltid.</span><span class="badge b-fn">Funksjon</span></div>
+          <div class="ko-body"><div class="ko-lbl">Ide</div><div class="ko-val">Friksjonsfri hook. Ingen prisbarriere. Få dem inn — la verktøyet selge Holdingservice videre.</div></div>
+        </div>
+        <div class="ko-cell">
+          <div class="ko-head"><span class="ko-name">Alle bruker Altinn feil til dette</span><span class="badge b-hu">Humor</span></div>
+          <div class="ko-body"><div class="ko-lbl">Ide</div><div class="ko-val">Selvironisk om den manuelle prosessen alle kjenner seg igjen i. Gjenkjenning driver klikk i startup-feeden.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div></div>
+
+
+<!-- ════ GUIDE ════ -->
+<div id="p-guide" class="pg"><div class="wrap">
+
+  <!-- DEL 1 -->
+  <div class="d1">Del 1 — Strategi.</div>
+  <div class="sub">Slik fyller vi ut rammeverket fra bunnen av — fra kundenotat til ferdige konsepter.</div>
+
+  <div class="d2">Steg 1 — Kundenotat.</div>
+  <div class="g-info">Kundenotatet er forutsetningen for alt som følger. Ingen strategiarbeid starter før dette er fylt ut. <strong>Brandtype og prispunkt</strong> er spesielt viktig — de styrer hele den kreative tilnærmingen.</div>
+
+  <div class="g-table">
+    <div class="g-table-head">
+      <div class="g-table-title">Felter og hva vi leter etter</div>
+    </div>
+    <div class="g-rows">
+      <div class="g-cell">
+        <span class="lbl">Produkt / tjeneste</span>
+        <span class="val">Hva selger de? Beskriv det i én setning slik en kunde ville gjort det.</span>
+      </div>
+      <div class="g-cell">
+        <span class="lbl">Brandtype</span>
+        <span class="val"><strong>Solution-first:</strong> problemet etableres før produktet. <strong>Product-first:</strong> produktet er helten fra frame 1.</span>
+      </div>
+      <div class="g-cell">
+        <span class="lbl">Modell</span>
+        <span class="val">Abonnement, enkjøp, lead-gen, hybrid. Påvirker hvilke hindringer som er relevante.</span>
+      </div>
+      <div class="g-cell">
+        <span class="lbl">Prispunkt og prisposisjon</span>
+        <span class="val">Konkret pris og plassering vs. markedet. Hva betaler folk for alternativet?</span>
+      </div>
+      <div class="g-cell full">
+        <span class="lbl">Produkt — nøkkelfakta</span>
+        <span class="val">Styrker, begrensninger, differensiatorer. Hva er sant om produktet som ikke alle vet? Hva kan vi ikke si?</span>
+      </div>
+      <div class="g-cell full">
+        <span class="lbl">Posisjon i markedet</span>
+        <span class="val">Hvem er konkurrentene? Hva vinner vi på, hva taper vi på? Hva er konkurrentenes rykte i markedet?</span>
+      </div>
+      <div class="g-cell full">
+        <span class="lbl">Viktige notater</span>
+        <span class="val">Strategiske føringer. Hvem skal vi ikke snakke til? Frister, kampanjeperioder, spesielle budskap.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="d2">Steg 2 — Innsikt.</div>
+  <div class="g-info">Vi leter ikke etter demografi. Vi leter etter <strong>motivasjoner, hindringer og kunnskap folk mangler</strong> — og spesielt: språket folk bruker om egne problemer. Et direkte sitat er mer verdifullt enn en oppsummering.</div>
+
+  <div class="g-steps">
+    <div class="g-step">
+      <div class="g-step-n">1</div>
+      <div class="g-step-body">
+        <div class="g-step-name">Desk research — Trustpilot, Google, Reddit, App Store</div>
+        <div class="g-step-desc">Gjøres alltid, uansett kundetype. Ingen tilgang nødvendig. Analyser både kunden og konkurrentene. Konkurrentenes 1–3-stjerners anmeldelser viser hva markedet savner — like verdifullt som kundens egne.</div>
+        <div class="g-step-tags"><span class="badge b-status">Alltid gjør dette</span><span class="badge b-status">Konkurrenter like viktig</span></div>
+      </div>
+    </div>
+    <div class="g-step">
+      <div class="g-step-n">2</div>
+      <div class="g-step-body">
+        <div class="g-step-name">Kundeinnsikt — fra kunden direkte eller via prompt</div>
+        <div class="g-step-desc">Hvis kunden deler: last opp og analyser. Hvis ikke: send kunden prompten fra Innsiktsprosessen og få outputen tilbake. Vi får innsikten uten å se rådata.</div>
+        <div class="g-step-tags"><span class="badge b-explore">Ideelt: direkte</span><span class="badge b-expand">Alternativ: via prompt</span></div>
+      </div>
+    </div>
+    <div class="g-step">
+      <div class="g-step-n">3</div>
+      <div class="g-step-body">
+        <div class="g-step-name">Syntetisering — fra funn til rammeverket</div>
+        <div class="g-step-desc">Bruk syntetiseringsprompten. Ikke lag noe opp — trekk det ut fra det vi faktisk har funnet. Hvem er de? → Målgruppe · Hva driver dem? → Motivasjon · Hva stoppet dem? → Hindring · Hva vet de ikke? → Kunnskap de mangler · Hva sa de til seg selv? → Intern stemme</div>
+        <div class="g-step-tags"><span class="badge b-status">Output: målgrupper</span><span class="badge b-status">Output: personaer</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d2">Steg 3 — Målgrupper.</div>
+  <div class="g-info"><strong>Maks 2 målgrupper per kunde.</strong> Målgrupper er stabile — de endres ikke fra måned til måned. De er filter for kreatørvalg, ikke kreativt mål i seg selv.</div>
+
+  <div class="g-table">
+    <div class="g-table-head">
+      <div class="g-table-title">Målgruppe-kort — felter</div>
+      <span class="badge b-status">Stabilt over tid</span>
+    </div>
+    <div class="g-rows">
+      <div class="g-cell">
+        <span class="lbl">Navn og beskrivelse</span>
+        <span class="val">Kort og beskrivende. Eks: «Aktive byggere — gründere og investorer» eller «Passive eiere — ansatte med holdingselskap de ikke valgte».</span>
+      </div>
+      <div class="g-cell">
+        <span class="lbl">Verdier og identitet</span>
+        <span class="val">Hva de <em>er</em>, ikke hva de <em>gjør</em>. Tid er den knappeste ressursen. Smart-deal-mentalitet.</span>
+      </div>
+      <div class="g-cell">
+        <span class="lbl">Kategorikunnskap</span>
+        <span class="val"><strong>Høy:</strong> kjenner konkurrenter, har testet løsninger. <strong>Middels:</strong> klar over kategorien. <strong>Lav:</strong> vet ikke at løsningen finnes.</span>
+      </div>
+      <div class="g-cell">
+        <span class="lbl">Feed-preferanser</span>
+        <span class="val">Hvilke brands, creators og medier følger de? Styrer valg av kreatør.</span>
+      </div>
+      <div class="g-cell full">
+        <span class="lbl">Kreatørtype</span>
+        <span class="val">Hvem snakker til denne målgruppen? Kreatøren skal ligne målgruppen — founder-creator, investor-creator, «dette lærte jeg»-format.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="d2">Steg 4 — Personaer.</div>
+  <div class="g-info"><strong>Antall personaer følger av innsikten — ikke en fast mal.</strong> Typisk 2 per målgruppe. Hver persona er det tydeligste use-caset innenfor målgruppen, formulert som JTBD: <em>[Navn — hva de vil få gjort]</em>.</div>
+
+  <div class="g-table">
+    <div class="g-table-head">
+      <div class="g-table-title">Persona-kort — felter og hva de betyr</div>
+      <span class="badge b-status">JTBD-format</span>
+    </div>
+    <div class="g-rows">
+      <div class="g-cell">
+        <span class="lbl">Motivasjon</span>
+        <span class="val">Hva driver dem mot kjøp? Trigger, øyeblikk, underliggende ønske. Fra 5-stjerners og «hva fikk deg til å kjøpe».</span>
+      </div>
+      <div class="g-cell">
+        <span class="lbl">Hindring</span>
+        <span class="val">Hva hindrer de som <em>vurderer</em> oss fra å kjøpe? De som sitter på gjerdet. Fra 1–3-stjerners og support.</span>
+      </div>
+      <div class="g-cell">
+        <span class="lbl">Benefit</span>
+        <span class="val">Hva får de funksjonelt og emosjonelt når det løser seg? «Nå slipper jeg å...» / «Jeg vet at...»</span>
+      </div>
+      <div class="g-cell">
+        <span class="lbl">Kunnskap de mangler</span>
+        <span class="val">Hva vet de ikke som ville gjort valget enkelt? Spørsmål til kundeservice, Reddit-tråder, det som overrasket nye kunder positivt.</span>
+      </div>
+      <div class="g-cell full">
+        <span class="lbl">Intern stemme</span>
+        <span class="val">Ett direkte sitat i første person. Eks: «Holdingselskapet er ganske enkelt, det er vel bare å levere tallene. Det ordner jeg i Fiken.»</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="d2">Steg 5 — Konsepter.</div>
+  <div class="g-info"><strong>Hvert konsept er det kreative svaret på én persona.</strong> Det svarer på enten motivasjon, hindring eller kunnskap de mangler — aldri alle tre på én gang. Tagges alltid med TOV. Sørg for variasjon: ikke alle fire konsepter per persona bør ha samme tag.</div>
+
+  <div class="igrid c3" style="margin-bottom:16px">
+    <div class="ic">
+      <span class="badge b-fn" style="margin-bottom:10px;display:inline-block">Funksjon</span>
+      <div class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">Konkret, målbart, rasjonelt. «Bytte er én eksport fra Fiken.»</div>
+    </div>
+    <div class="ic">
+      <span class="badge b-em" style="margin-bottom:10px;display:inline-block">Emosjon</span>
+      <div class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">Aspirational, identitetsdrevet. «Vi tar ansvar. Du trenger ikke.»</div>
+    </div>
+    <div class="ic">
+      <span class="badge b-hu" style="margin-bottom:10px;display:inline-block">Humor</span>
+      <div class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">Ironi og gjenkjenning. «Skjønner ingenting? Perfekt.»</div>
+    </div>
+  </div>
+
+  <div class="g-code">
+    <div class="g-code-lbl">Eksempel — fire konsepter til én persona</div>
+    <div class="g-code-text">Persona: Vil bygge — ikke bokføre (Tech-gründer)
+
+1. «Fiken leverer — men leverer riktig?» [Funksjon] — svarer på: kunnskap de mangler
+   Vis differansen mellom å levere og å levere riktig.
+
+2. «Bokettersynet de ikke visste om» [Emosjon] — svarer på: hindringen
+   Founder forteller hva som skjedde da Skatteetaten kom på besøk.
+
+3. «Tid er penger. Regn det ut.» [Funksjon] — svarer på: motivasjon
+   Konkret kalkyle mot fastprisen.
+
+4. «Vi tar ansvar. Du trenger ikke.» [Emosjon] — svarer på: motivasjon + benefit
+   Holdingselskapets plikter blir Holdingservices plikter.</div>
+  </div>
+
+  <hr>
+
+  <!-- DEL 2 -->
+  <div class="d1">Del 2 — Kreatør.</div>
+  <div class="sub">Hva kreatørene trenger å forstå for å lage annonser som fungerer på Meta.</div>
+
+  <div class="d2">Rammeverket — kort forklart.</div>
+
+  <div class="level-list">
+    <div class="level-item">
+      <div class="level-dot" style="background:var(--black)"></div>
+      <div class="level-name">Målgruppe</div>
+      <div class="level-desc">Du er valgt fordi du ligner målgruppen. Brukes til å velge kreatør — ikke til å styre innholdet direkte.</div>
+      <span class="badge b-status">Stabilt</span>
+    </div>
+    <div class="level-item">
+      <div class="level-dot" style="background:var(--green)"></div>
+      <div class="level-name">Persona</div>
+      <div class="level-desc">Hvem du snakker til i denne annonsen. Les alle fem felter. <strong>Intern stemme</strong> er utgangspunktet for hooken.</div>
+      <span class="badge b-explore">Din guide</span>
+    </div>
+    <div class="level-item">
+      <div class="level-dot" style="background:var(--green)"></div>
+      <div class="level-name">Konsept</div>
+      <div class="level-desc">Hva annonsen skal bevege og med hvilken tone. Sier ingenting om format, lengde eller stil — det er ditt.</div>
+      <span class="badge b-explore">Din retning</span>
+    </div>
+    <div class="level-item">
+      <div class="level-dot" style="background:var(--black)"></div>
+      <div class="level-name">Annonse</div>
+      <div class="level-desc">Hook, visual, format, lo-fi/hi-fi. 3–4 annonser per konsept. Variasjon i hook og format — ikke i persona eller konsept.</div>
+      <span class="badge b-expand">Din jobb</span>
+    </div>
+  </div>
+
+  <div class="d2">Hooken — det viktigste du gjør.</div>
+  <div class="g-warn"><strong>Hooken avgjør alt.</strong> En sterk hook med middelmådig resten slår alltid middelmådig hook med sterk resten. Algoritmen bestemmer budsjett basert på de første 2–3 sekundene. Ingen hook = ingen rekkevidde.</div>
+  <div class="g-info">Den beste kilden til hooks er <strong>intern stemme</strong> fra persona-kortet — det er allerede ordene personen bruker om sitt eget problem. Start der.</div>
+
+  <div class="g-hook-grid">
+    <div class="g-hook-cell">
+      <span class="lbl">Gjenkjenning</span>
+      <div class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">«Holdingselskapet er vel bare å levere tallene...» — personen kjenner seg igjen. Fungerer best på kald målgruppe.</div>
+    </div>
+    <div class="g-hook-cell">
+      <span class="lbl">Resultat først</span>
+      <div class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">Vis sluttresultatet i første frame. «Null timer brukt på holdingselskapet i år.» Fungerer best med Emosjon-konsepter.</div>
+    </div>
+    <div class="g-hook-cell">
+      <span class="lbl">Overraskelse / kontrast</span>
+      <div class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">«Skjønner ingenting? Perfekt.» Bryter forventning. Fungerer best med Humor-konsepter og Hindring-annonser.</div>
+    </div>
+    <div class="g-hook-cell">
+      <span class="lbl">Spørsmål</span>
+      <div class="val" style="font-size:13px;color:rgba(9,10,8,0.6)">«Fiken leverer — men leverer riktig?» Speiler intern stemme direkte. Sterk for Problem-unaware-personaer.</div>
+    </div>
+  </div>
+
+  <div class="g-code" style="margin-top:12px">
+    <div class="g-code-lbl">Eksempel — tre hooks til samme konsept</div>
+    <div class="g-code-text">Konsept: «Et nødvendig onde, løst» [Emosjon] — persona: ansatt med ansatteierskap
+
+Hook 1 (intern stemme, direkte sitat):
+→ «For meg var holdingselskapet et nødvendig onde»
+
+Hook 2 (gjenkjenning, visuell):
+→ Åpner med stresset ansikt foran Altinn-skjerm
+
+Hook 3 (resultat):
+→ «Holdingselskapet mitt eksisterer. Jeg tenker aldri på det.»
+
+Alle tre hooks → samme konsept → samme persona</div>
+  </div>
+
+  <div class="d2">Explore og Expand.</div>
+
+  <div class="g-split">
+    <div class="g-split-b">
+      <span class="badge b-explore" style="margin-bottom:12px;display:inline-block">Explore — 5 per måned</span>
+      <div class="val" style="font-size:13px;color:rgba(9,10,8,0.65);margin-top:2px">Ny persona som ikke er testet i kontoen ennå<br>Nytt konsept innenfor en eksisterende persona<br>Ny TOV-vinkling (Funksjon → Humor osv.)</div>
+      <div class="val" style="font-size:12px;color:var(--lbl);margin-top:10px">Formålet: finne noe nytt som slår vinneren</div>
+    </div>
+    <div class="g-split-w">
+      <span class="badge b-expand" style="margin-bottom:12px;display:inline-block">Expand — 5 per uke</span>
+      <div class="val" style="font-size:13px;color:rgba(9,10,8,0.65);margin-top:2px">Ny hook på et vinnende konsept<br>Lo-fi-versjon av hi-fi-vinner (eller omvendt)<br>Nytt format — story vs. feed, stativ vs. walking</div>
+      <div class="val" style="font-size:12px;color:var(--lbl);margin-top:10px">Formålet: skalere det vi vet virker</div>
+    </div>
+  </div>
+
+  <div class="g-info" style="margin-top:0"><strong>Tommelregel:</strong> Når en annonse fungerer — lag 3–4 varianter med ny hook og/eller nytt format. Ikke endre persona eller konsept. Det er Expand. Når annonsene slutter å fungere — lag ny persona eller nytt konsept. Det er Explore.</div>
+
+  <div class="d2">Regler for produksjon.</div>
+
+  <div class="g-rules">
+    <div class="g-rule">
+      <div class="g-rule-arrow">→</div>
+      <div class="g-rule-text"><strong>3–4 annonser per konsept.</strong> Hver annonse skal ha ulik hook. Fire annonser med samme hook og ulikt B-roll er ikke variasjon.</div>
+    </div>
+    <div class="g-rule">
+      <div class="g-rule-arrow">→</div>
+      <div class="g-rule-text"><strong>Varier på riktig nivå.</strong> Hook og format varierer innenfor konseptet. Persona og konsept varierer på Explore-nivå. Bland ikke disse.</div>
+    </div>
+    <div class="g-rule">
+      <div class="g-rule-arrow">→</div>
+      <div class="g-rule-text"><strong>Lo-fi og hi-fi er ikke kvalitetsskala — de er ulike formater.</strong> Stativ og talking head kan konvertere like bra som polert produksjon. Test begge.</div>
+    </div>
+    <div class="g-rule">
+      <div class="g-rule-arrow">→</div>
+      <div class="g-rule-text"><strong>Første 3 sekunder avgjør alt.</strong> Bruk de første sekundene på hooken — ikke intro, ikke branding, ikke forklaring. Produktet introduseres etter at hooken har fanget.</div>
+    </div>
+    <div class="g-rule">
+      <div class="g-rule-arrow">→</div>
+      <div class="g-rule-text"><strong>Si én ting per annonse.</strong> Ikke prøv å dekke motivasjon, hindring og benefit i én video. Velg ett og si det tydelig.</div>
+    </div>
+    <div class="g-rule">
+      <div class="g-rule-arrow">→</div>
+      <div class="g-rule-text"><strong>Story og feed kan ha ulik hook.</strong> Samme konsept, én hook optimalisert for feed og én for story. Formatet endrer ikke personaen.</div>
+    </div>
+  </div>
+
+  <div class="d2">Gjør dette. Unngå dette.</div>
+
+  <div class="g-split">
+    <div class="g-split-b">
+      <span class="lbl" style="color:var(--green);margin-bottom:4px">Gjør dette</span>
+      <div class="g-dot-list">
+        <div class="g-dot-item"><span class="g-dot-green"></span><span class="g-dot-text">Hook som speiler intern stemme direkte</span></div>
+        <div class="g-dot-item"><span class="g-dot-green"></span><span class="g-dot-text">Si én ting — ikke hele produktet</span></div>
+        <div class="g-dot-item"><span class="g-dot-green"></span><span class="g-dot-text">Vis øyeblikk og situasjoner, ikke features</span></div>
+        <div class="g-dot-item"><span class="g-dot-green"></span><span class="g-dot-text">Snakk til én person, ikke alle</span></div>
+        <div class="g-dot-item"><span class="g-dot-green"></span><span class="g-dot-text">Avslutt med én tydelig handling</span></div>
+      </div>
+    </div>
+    <div class="g-split-w">
+      <span class="lbl" style="color:rgba(9,10,8,0.4);margin-bottom:4px">Unngå dette</span>
+      <div class="g-dot-list">
+        <div class="g-dot-item"><span class="g-dot-black"></span><span class="g-dot-text">Generisk intro («Hei, i dag skal vi snakke om...»)</span></div>
+        <div class="g-dot-item"><span class="g-dot-black"></span><span class="g-dot-text">Liste over alle produktfordeler</span></div>
+        <div class="g-dot-item"><span class="g-dot-black"></span><span class="g-dot-text">Snakke til «alle som vil ha X»</span></div>
+        <div class="g-dot-item"><span class="g-dot-black"></span><span class="g-dot-text">Mer enn én hook per annonse</span></div>
+        <div class="g-dot-item"><span class="g-dot-black"></span><span class="g-dot-text">Branding i starten — det kan vente</span></div>
+      </div>
+    </div>
+  </div>
+
+</div></div>
+
+
+<script>
+function go(id, btn) {
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.nt').forEach(b => b.classList.remove('on'));
+  document.getElementById('p-' + id).classList.add('on');
+  btn.classList.add('on');
+}
+</script>
+</body>
+</html>
